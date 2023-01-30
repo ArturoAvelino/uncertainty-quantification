@@ -10,5 +10,5 @@
 
 *.txt
 .gitattributes
-.DS_Store
+*.DS_Store
 *.log
