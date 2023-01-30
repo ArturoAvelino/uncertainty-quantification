@@ -1,0 +1,14 @@
+#------- r -----------
+
+.Rproj.user
+.Rapp.history
+.RData
+.Rhistory
+*.Rproj
+
+#------- diverse ------------
+
+*.txt
+.gitattributes
+.DS_Store
+*.log
