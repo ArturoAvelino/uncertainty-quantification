@@ -86,10 +86,6 @@ max_mean[4] - min_mean[4]
 
 # Find the row with the maximum value of the mean:
 min_row <- highest_freq.df[which.min(highest_freq.df$mean_vect), ]
-#     sample.tt sample.ss freq mean_vect
-# 131       0.2       1.5   33 0.5479624
 
 # Find the row with the maximum value of the mean:
 max_row <- highest_freq.df[which.max(highest_freq.df$mean_vect), ]
-#     sample.tt sample.ss freq mean_vect
-# 698 0.8333333       1.5   31 0.6307019
