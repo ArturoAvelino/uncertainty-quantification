@@ -37,12 +37,20 @@ grid_size <- 1e2
 # Define the grid of values for theta.
 grid_theta <- seq(from=1e-2, to= (1-1e-2), length.out=grid_size)
 
-# Compute the unnormalized PDF of the posterior in HBM
+# Compute the unnormalized PDF of the theta posterior in HBM
 posterior_pdf_unnorm <- ((alpha_int + beta_int)^(-5/2)) * dbeta(grid_theta,
     alpha_int, beta_int) * dbinom(yy, size = nn, prob = grid_theta)
 
-# Normalize the posterior
+# Normalize the posterior of theta
 posterior_pdf <- (posterior_pdf_unnorm * grid_size) / sum(posterior_pdf_unnorm)
 
-# Plot the normalize posterior
+# Plot the normalize posterior of theta
 plot(grid_theta, posterior_pdf)
+# Generate a random sample of theta, following its the posterior distribution
+sample_pdf_theta <- sample(grid_theta, prob= posterior_pdf, size = sample_size, replace=TRUE)
+hist(sample_pdf_theta, breaks = 9, freq = FALSE)
+# Compute the empirical CDF from the random sample of theta
+sample_ecdf <- ecdf(sample_pdf_theta)
+# Plot the CDF
+plot(sample_pdf_theta, sample_ecdf(sample_pdf_theta), xlim=c(0,1),
+    xlab="theta", ylab="CDF")
