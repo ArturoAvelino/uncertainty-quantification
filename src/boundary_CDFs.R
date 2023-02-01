@@ -68,7 +68,14 @@ bb <- 1 - aa  # maximum known value of theta
 
 color_m5 <- "blue"
 
+# -------------------------
 
+# The "true" CDF. Fixed values of the parameters used to simulate samples
+
+t_true <- 0.3
+s_true <- 4
+
+color_true <- "black"
 
 # ########################################################60
 #
@@ -79,6 +86,33 @@ set.seed(1234)
 
 # sample size
 sample_size <- 1e4
+
+# --------------------------------------------------------60
+# The "true" CDF
+
+# Grid size
+grid_size <- 1e4
+
+# Define the grid of values for theta.
+grid_theta <- seq(from=1e-8, to=(1 - 1e-8), length.out=grid_size)
+
+# Converting the values (s, t) to (alpha, beta):
+alpha_true <- s_true * t_true
+beta_true  <- s_true * (1 - t_true)
+
+# Converting (alpha, beta) to (alpha_n, beta_n)
+alpha_n_true <- alpha_true + yy
+beta_n_true  <- beta_true + nn - yy
+
+# Transformation between (tt, ss) to (tt_n, ss_n)
+tt_n_true <- (s_true * t_true + yy)/(s_true + nn)
+ss_n_true <- s_true + nn
+
+# Create a sample of random data from a posterior (beta) distribution
+sample_true <- rbeta(sample_size, shape1 = alpha_n_true, shape2 = beta_n_true)
+
+# Compute the CDF
+cdf_true <- ecdf(sample_true)
 
 # --------------------------------------------------------60
 
@@ -210,7 +244,7 @@ ite_tt  <- 30
 ite_ss  <- 30
 
 tt_max <- 1
-ss_max <- 30
+ss_max <- 5
 
 # Define a dataframe where i will write the values.
 posterior.df <- data.frame(
@@ -285,7 +319,7 @@ posterior.df2 <-na.omit(posterior.df)
 posterior.df3 <- posterior.df2[is.finite(rowSums(posterior.df2)),]
 
 # Randomize the rows.
-sample.rows <- sample( 1:nrow(posterior.df3), size=sample_size, replace=TRUE,
+sample.rows <- sample( 1:nrow(posterior.df3), size=1e5, replace=TRUE,
     prob=posterior.df3$posterior)
 
 sample.theta <- posterior.df3$theta[ sample.rows ]
@@ -405,12 +439,6 @@ UBF_a_b_fun <- function(theta, aa){
     } else { 1 }
 }
 
-# Grid size
-grid_size <- 1e4
-
-# Define the grid of values for theta.
-grid_theta <- seq(from=1e-8, to=(1 - 1e-8), length.out=grid_size)
-
 # Initialize the vector with -1 non-sense values.
 LBF_a_b_sample <- rep(-1, grid_size)
 UBF_a_b_sample <- rep(-1, grid_size)
@@ -456,12 +484,6 @@ UBF_mean_fun <- function(theta, aa, bb, mu){
         (bb - mu)/ (bb - theta)
     } else { 1 }
 }
-
-# Grid size
-grid_size <- 1e4
-
-# Define the grid of values for theta.
-grid_theta <- seq(from=1e-8, to=(1 - 1e-8), length.out=grid_size)
 
 # Initialize the vector with -1 non-sense values.
 LBF_mean_sample <- rep(-1, grid_size)
@@ -511,8 +533,8 @@ points(knots(cdf_m2_right), cdf_m2_right(knots(cdf_m2_right)),
 # -----------------------
 #       HBM
 
-points(knots(cdf_m4_theta), cdf_m4_theta(knots(cdf_m4_theta)),
-    col= color_m4, type = "l", lwd=2)
+# points(knots(cdf_m4_theta), cdf_m4_theta(knots(cdf_m4_theta)),
+#     col= color_m4, type = "l", lwd=2)
 
 # -----------------------
 #       PBA, [a,b] known
@@ -527,6 +549,12 @@ points(knots(cdf_m4_theta), cdf_m4_theta(knots(cdf_m4_theta)),
 points(grid_theta, LBF_mean_sample, type="l", lwd=3, col = color_m5)
 
 points(grid_theta, UBF_mean_sample, type="l", lwd=3, col = color_m5)
+
+# -----------------------
+#       The "true" CDF
+
+points(knots(cdf_true),  cdf_true( knots(cdf_true)),
+    col = color_true, type = "l", lwd=2, lty="dotted")
 
 # -----------------------
 
