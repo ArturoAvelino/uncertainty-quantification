@@ -318,9 +318,12 @@ posterior.df2 <-na.omit(posterior.df)
 # Remove the rows with +/-Inf values.
 posterior.df3 <- posterior.df2[is.finite(rowSums(posterior.df2)),]
 
+# Normalize the values of the posterior column in the dataframe
+posterior.df3$post_norm = posterior.df3$posterior * (nrow(posterior.df3) / sum(posterior.df3$posterior) )
+
 # Randomize the rows.
 sample.rows <- sample( 1:nrow(posterior.df3), size=1e5, replace=TRUE,
-    prob=posterior.df3$posterior)
+      prob=posterior.df3$post_norm)
 
 sample.theta <- posterior.df3$theta[ sample.rows ]
 sample.tt <- posterior.df3$tt[ sample.rows ]
