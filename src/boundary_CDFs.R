@@ -46,9 +46,10 @@ color_m3 <- "black"  # color to plot the CDFs
 # -------------------------
 
 # Model 4: HBM
-# There is not "left" and "right" CDF, and {t, s} are marginanlized.
 
 color_m4 <- "red"  # color to plot the CDFs
+
+probab_threshold <- 0.99 # Probability region of the boundary CDFs
 
 # -------------------------
 
@@ -72,7 +73,7 @@ color_m5 <- "blue"
 
 # The "true" CDF. Fixed values of the parameters used to simulate samples
 
-t_true <- 0.3
+t_true <- 0.6
 s_true <- 4
 
 color_true <- "black"
@@ -80,6 +81,8 @@ color_true <- "black"
 # ########################################################60
 #
 #       THE CODE: NO NEED FOR USER INTERACTION
+
+library(plyr)
 
 # Random seed
 set.seed(1234)
@@ -342,6 +345,118 @@ cdf_m4_theta <- ecdf(sample.theta)
 #
 # dev.copy(jpeg, "cdf_theta_line_all_.jpeg"); dev.off()
 
+# --------------------------------------------------------60
+
+# Boundary CDFs for HBM
+
+# Dataframe with (t,s) values only.
+post_sampling_t_s.df <- data.frame(sample.tt, sample.ss)
+
+# Dataframe with the unique values of (t,s), and its frequency in the "post_sampling_t_s.df" dataframe.
+freq.df <- count(post_sampling_t_s.df, vars=c("sample.tt", "sample.ss"))
+
+# Determine the probability region
+for (i1 in 1:nrow(freq.df)) {
+
+    min_counts <- i1
+
+    # Select the rows with the largest probability
+    highest_freq.df <- freq.df[freq.df$freq > min_counts, ]
+
+    # Quantile from the frequency
+    probab_region <- sum(highest_freq.df$freq) / sum(freq.df$freq)
+
+    if (probab_region <= probab_threshold){break}
+}
+
+# Empty vector to fill out with the values of mean for each CDF
+mean_vect <- rep(NA, nrow(highest_freq.df) )
+
+for (i1 in 1:nrow(highest_freq.df) ) {
+
+    tt_int <- highest_freq.df[i1,1]
+    ss_int <- highest_freq.df[i1,2]
+
+    # Converting the values (s, t) to (alpha, beta):
+    alpha_int <- ss_int * tt_int
+    beta_int  <- ss_int * (1 - tt_int)
+
+    # Compute the unnormalized PDF of the theta posterior in HBM
+    posterior_pdf_unnorm <- ((alpha_int + beta_int)^(-5/2)) * dbeta(grid_theta,
+        alpha_int, beta_int) * dbinom(yy, size = nn, prob = grid_theta)
+
+    # Normalize the posterior of theta
+    posterior_pdf <- (posterior_pdf_unnorm * grid_size) / sum(posterior_pdf_unnorm)
+
+    # Generate a random sample of theta, following its the posterior distribution
+    sample_pdf_theta <- sample(grid_theta, prob= posterior_pdf, size = sample_size, replace=TRUE)
+
+    mean_vect[i1] <- mean(sample_pdf_theta)
+
+    # Compute the empirical CDF from the random sample of theta
+    sample_ecdf <- ecdf(sample_pdf_theta)
+}
+
+# Determine the left and right CDFs
+highest_freq.df$mean_vect = mean_vect
+
+min_mean <- min(highest_freq.df$mean_vect)
+
+max_mean <- max(highest_freq.df$mean_vect)
+
+# Compute the distance between the left and right CDFs in HBM.
+distance_m4 <- max_mean - min_mean
+
+# Find the row with the minimum value of the mean:
+min_row <- highest_freq.df[which.min(highest_freq.df$mean_vect), ]
+
+# Find the row with the maximum value of the mean:
+max_row <- highest_freq.df[which.max(highest_freq.df$mean_vect), ]
+
+# ----------
+
+# Left CDF
+tt_m4_left <- min_row[1,1]
+ss_m4_left <- min_row[1,2]
+
+alpha_m4_left <- ss_m4_left * tt_m4_left
+beta_m4_left  <- ss_m4_left * (1 - tt_m4_left)
+
+# Compute the unnormalized PDF of the theta posterior in HBM
+post_pdf_m4_unnorm_left <- ((alpha_m4_left + beta_m4_left)^(-5/2)) * dbeta(grid_theta,
+    alpha_m4_left, beta_m4_left) * dbinom(yy, size = nn, prob = grid_theta)
+
+# Normalize the posterior PDF of theta
+post_pdf_m4_left <- (post_pdf_m4_unnorm_left * grid_size) / sum(post_pdf_m4_unnorm_left)
+
+# Generate a random sample of theta, following its the posterior distribution
+sample_m4_left <- sample(grid_theta, prob= post_pdf_m4_left, size = sample_size, replace=TRUE)
+
+# Compute the empirical CDF from the random sample of theta
+cdf_m4_left <- ecdf(sample_m4_left)
+
+# ----------
+
+# Right CDF
+tt_m4_right <- max_row[1,1]
+ss_m4_right <- max_row[1,2]
+
+alpha_m4_right <- ss_m4_right * tt_m4_right
+beta_m4_right  <- ss_m4_right * (1 - tt_m4_right)
+
+# Compute the unnormalized PDF of the theta posterior in HBM
+post_pdf_m4_unnorm_right <- ((alpha_m4_right + beta_m4_right)^(-5/2)) * dbeta(grid_theta,
+    alpha_m4_right, beta_m4_right) * dbinom(yy, size = nn, prob = grid_theta)
+
+# Normalize the posterior PDF of theta
+post_pdf_m4_right <- (post_pdf_m4_unnorm_right * grid_size) / sum(post_pdf_m4_unnorm_right)
+
+# Generate a random sample of theta, following its the posterior distribution
+sample_m4_right <- sample(grid_theta, prob= post_pdf_m4_right, size = sample_size, replace=TRUE)
+
+# Compute the empirical CDF from the random sample of theta
+cdf_m4_right <- ecdf(sample_m4_right)
+
 # ########################################################60
 
 # Model 3: Walley's general model {t varying, s varying}:
@@ -536,8 +651,11 @@ points(knots(cdf_m2_right), cdf_m2_right(knots(cdf_m2_right)),
 # -----------------------
 #       HBM
 
-# points(knots(cdf_m4_theta), cdf_m4_theta(knots(cdf_m4_theta)),
-#     col= color_m4, type = "l", lwd=2)
+# points(knots(cdf_m4_theta), cdf_m4_theta(knots(cdf_m4_theta)), col= color_m4, type = "l", lwd=2)
+
+points(knots(cdf_m4_left), cdf_m4_left(knots(cdf_m4_left)), col= color_m4, type = "l", lwd=2)
+
+points(knots(cdf_m4_right), cdf_m4_right(knots(cdf_m4_right)), col= color_m4, type = "l", lwd=2)
 
 # -----------------------
 #       PBA, [a,b] known
@@ -556,8 +674,7 @@ points(grid_theta, UBF_mean_sample, type="l", lwd=3, col = color_m5)
 # -----------------------
 #       The "true" CDF
 
-points(knots(cdf_true),  cdf_true( knots(cdf_true)),
-    col = color_true, type = "l", lwd=2, lty="dotted")
+points(knots(cdf_true),  cdf_true( knots(cdf_true)), col = color_true, type = "l", lwd=2, lty="dotted")
 
 # -----------------------
 
@@ -573,6 +690,7 @@ distance_m5 <- bb - aa
 
 cat(paste("CDF distance, Walley (t vary, s fix)  = ", round(distance_m2,4), sep=""))
 cat(paste("CDF distance, Walley (t vary, s vary) = ", round(distance_m3,4), sep=""))
+cat(paste("CDF distance, HBM (", probab_threshold, "/1 probability) = ", round(distance_m3,4), sep=""))
 cat(paste("CDF distance, PBA (a, b, mean) known  = ", round(distance_m5,4), sep=""))
 
 # ########################################################60
