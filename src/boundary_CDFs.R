@@ -1,4 +1,4 @@
-#       CDF BOUNDARIES FOR THE BETA-BINOMIAL MODEL
+# 		CDF BOUNDARIES FOR THE BETA-BINOMIAL MODEL
 
 # ########################################################60
 
@@ -80,7 +80,7 @@ color_true <- "black"
 
 # ########################################################60
 #
-#       THE CODE: NO NEED FOR USER INTERACTION
+#		THE CODE: NO NEED FOR USER INTERACTION
 
 library(plyr)
 
@@ -94,7 +94,7 @@ sample_size <- 1e4
 # The "true" CDF
 
 # Grid size
-grid_size <- 1e4
+grid_size <- 1e5
 
 # Define the grid of values for theta.
 grid_theta <- seq(from=1e-8, to=(1 - 1e-8), length.out=grid_size)
@@ -121,7 +121,7 @@ cdf_true <- ecdf(sample_true)
 
 # Model 1: Walley's {t fix, s varying}
 
-#       LEFT CDF
+#		LEFT CDF
 
 # Converting the values (s, t) to (alpha, beta):
 alpha_m1_left <- s_m1_left * t_m1
@@ -240,7 +240,7 @@ cdf_m2_right <- ecdf(sample_m2_right)
 
 # Model 4: HBM
 
-#       Parameters: theta, t, s
+# 		Parameters: theta, t, s
 
 ite_theta <- 30
 ite_tt  <- 30
@@ -475,6 +475,10 @@ beta_n_m3_left  <- beta_m3_left + nn - yy
 tt_n_m3_left <- (s_m3_left * t_m3_left + yy)/(s_m3_left + nn)
 ss_n_m3_left <- s_m3_left + nn
 
+# pdf_m3_left <- dbeta(grid_theta, shape1 = alpha_n_m3_left, shape2 = beta_n_m3_left)  #_
+# plot(grid_theta, pdf_m3_left, col=color_m3, type = "l", lwd=2, xlab=expression(theta), ylab="PDF")  #_
+# dev.copy(jpeg, paste("left_pdf_m3_n_", nn, "_y_", yy, "_t_", t_m3_left, "_s_", s_m3_left, "_.jpeg", sep="")); dev.off() #_
+
 # Create a sample of random data from a posterior (beta) distribution
 sample_m3_left <- rbeta(sample_size, shape1 = alpha_n_m3_left, shape2 = beta_n_m3_left)
 
@@ -492,11 +496,6 @@ cdf_m3_left <- ecdf(sample_m3_left)
 # Plot the CDF
 # plot(cdf_m3_left, xlab="theta", ylab="CDF", xlim=c(0,1))
 # dev.copy(jpeg, paste("left_cdf_theta_B_tt", t_m3_left, "ss", s_m3_left, "_.jpeg")); dev.off()
-#
-# # A plot with more flexibility to manipulate:
-# plot(sample_m3_left, cdf_m3_left(sample_m3_left) ,
-#     xlab="theta", ylab="CDF", xlim=c(0,1))
-# dev.copy(jpeg, paste("left_cdf_theta_A_tt", t_m3_left, "ss", s_m3_left, "_.jpeg")); dev.off()
 
 # --------------------------------------------------------60
 
@@ -531,11 +530,6 @@ cdf_m3_right <- ecdf(sample_m3_right)
 # Plot the CDF
 # plot(cdf_m3_right, xlab="theta", ylab="CDF", xlim=c(0,1))
 # dev.copy(jpeg, paste("right_cdf_theta_B_tt", t_m3_right, "ss", s_m3_right, "_.jpeg")); dev.off()
-#
-# # A plot with more flexibility to manipulate:
-# plot(sample_m3_right, cdf_m3_right(sample_m3_right) ,
-#     xlab="theta", ylab="CDF", xlim=c(0,1))
-# dev.copy(jpeg, paste("right_cdf_theta_A_tt", t_m3_right, "ss", s_m3_right, "_.jpeg")); dev.off()
 
 # ########################################################60
 
@@ -616,7 +610,7 @@ for(i1 in 1:length(grid_theta)) {
 
 # ########################################################60
 
-#       Overlap plots
+# 		Overlap plots
 
 # -----------------------
 #       Walley's general model {t varying, s varying}:
@@ -649,7 +643,7 @@ points(knots(cdf_m2_right), cdf_m2_right(knots(cdf_m2_right)),
 #     # , lty="dotted")
 
 # -----------------------
-#       HBM
+# 		HBM
 
 # points(knots(cdf_m4_theta), cdf_m4_theta(knots(cdf_m4_theta)), col= color_m4, type = "l", lwd=2)
 
