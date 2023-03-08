@@ -7,18 +7,18 @@
 nn <- 10 # the "n" number of trials
 yy <- 6 # the "y" number of successes in the "n" trials
 
-mu <- 0.6       # mean value
+mu <- 0.6       # mean value for PBA
 
 # -------------------------
 
 # Model 1: Walley's {t fix, s varying}:
 
-t_m1       <- 0.2   # prior "t" for both CDFs
+# t_m1       <- 0.2   # prior "t" for both CDFs
 
-s_m1_left  <- 30   # prior "s" for left CDF
-s_m1_right <- 0.01  # prior "s" for right CDF
+# s_m1_left  <- 30   # prior "s" for left CDF
+# s_m1_right <- 0.01  # prior "s" for right CDF
 
-color_m1 <- "lightgrey"  # color to plot the CDFs
+# color_m1 <- "lightgrey"  # color to plot the CDFs
 
 # -------------------------
 
@@ -55,10 +55,10 @@ probab_threshold <- 0.99 # Probability region of the boundary CDFs
 
 # Model 5.1: PBA, for the case [a,b] known.
 
-aa <- 1e-6      # minimum known value of theta
-bb <- 1 - aa  # maximum known value of theta
+# aa <- 1e-6      # minimum known value of theta
+# bb <- 1 - aa  # maximum known value of theta
 
-color_m5 <- "blue"
+# color_m5 <- "blue"
 
 # -------------------------
 
@@ -123,45 +123,44 @@ cdf_true <- ecdf(sample_true)
 
 #		LEFT CDF
 
-# Converting the values (s, t) to (alpha, beta):
-alpha_m1_left <- s_m1_left * t_m1
-beta_m1_left  <- s_m1_left * (1 - t_m1)
+# # Converting the values (s, t) to (alpha, beta):
+# alpha_m1_left <- s_m1_left * t_m1
+# beta_m1_left  <- s_m1_left * (1 - t_m1)
 
-# Converting (alpha, beta) to (alpha_n, beta_n)
-alpha_n_m1_left <- alpha_m1_left + yy
-beta_n_m1_left  <- beta_m1_left + nn - yy
+# # Converting (alpha, beta) to (alpha_n, beta_n)
+# alpha_n_m1_left <- alpha_m1_left + yy
+# beta_n_m1_left  <- beta_m1_left + nn - yy
 
-# Transformation between (tt, ss) to (tt_n, ss_n)
-tt_n_m1_left <- (s_m1_left * t_m1 + yy)/(s_m1_left + nn)
-ss_n_m1_left <- s_m1_left + nn
+# # Transformation between (tt, ss) to (tt_n, ss_n)
+# tt_n_m1_left <- (s_m1_left * t_m1 + yy)/(s_m1_left + nn)
+# ss_n_m1_left <- s_m1_left + nn
 
-# Create a sample of random data from a posterior (beta) distribution
-sample_m1_left <- rbeta(sample_size, shape1 = alpha_n_m1_left, shape2 = beta_n_m1_left)
+# # Create a sample of random data from a posterior (beta) distribution
+# sample_m1_left <- rbeta(sample_size, shape1 = alpha_n_m1_left, shape2 = beta_n_m1_left)
 
-# Compute the CDF
-cdf_m1_left <- ecdf(sample_m1_left)
+# # Compute the CDF
+# cdf_m1_left <- ecdf(sample_m1_left)
 
-# --------------------------------------------------------60
 
-#       RIGHT CDF
+# #       RIGHT CDF
 
-# Converting the values (s, t) to (alpha, beta):
-alpha_m1_right <- s_m1_right * t_m1
-beta_m1_right  <- s_m1_right * (1 - t_m1)
+# # Converting the values (s, t) to (alpha, beta):
+# alpha_m1_right <- s_m1_right * t_m1
+# beta_m1_right  <- s_m1_right * (1 - t_m1)
 
-# Converting (alpha, beta) to (alpha_n, beta_n)
-alpha_n_m1_right <- alpha_m1_right + yy
-beta_n_m1_right  <- beta_m1_right + nn - yy
+# # Converting (alpha, beta) to (alpha_n, beta_n)
+# alpha_n_m1_right <- alpha_m1_right + yy
+# beta_n_m1_right  <- beta_m1_right + nn - yy
 
-# Transformation between (tt, ss) to (tt_n, ss_n)
-tt_n_m1_right <- (s_m1_right * t_m1 + yy)/(s_m1_right + nn)
-ss_n_m1_right <- s_m1_right + nn
+# # Transformation between (tt, ss) to (tt_n, ss_n)
+# tt_n_m1_right <- (s_m1_right * t_m1 + yy)/(s_m1_right + nn)
+# ss_n_m1_right <- s_m1_right + nn
 
-# Create a sample of random data from a posterior (beta) distribution
-sample_m1_right <- rbeta(sample_size, shape1 = alpha_n_m1_right, shape2 = beta_n_m1_right)
+# # Create a sample of random data from a posterior (beta) distribution
+# sample_m1_right <- rbeta(sample_size, shape1 = alpha_n_m1_right, shape2 = beta_n_m1_right)
 
-# Compute the CDF
-cdf_m1_right <- ecdf(sample_m1_right)
+# # Compute the CDF
+# cdf_m1_right <- ecdf(sample_m1_right)
 
 # ########################################################60
 
