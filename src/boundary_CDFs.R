@@ -392,8 +392,6 @@ for (i1 in 1:nrow(highest_freq.df) ) {
 
     mean_vect[i1] <- mean(sample_pdf_theta)
 
-    # Compute the empirical CDF from the random sample of theta
-    sample_ecdf <- ecdf(sample_pdf_theta)
 }
 
 # Determine the left and right CDFs
