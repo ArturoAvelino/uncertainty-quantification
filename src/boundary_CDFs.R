@@ -145,7 +145,6 @@ cdf_true <- ecdf(sample_true)
 # # Compute the CDF
 # cdf_m1_left <- ecdf(sample_m1_left)
 
-
 # #       RIGHT CDF
 
 # # Converting the values (s, t) to (alpha, beta):
@@ -623,7 +622,8 @@ for(i1 in 1:length(grid_theta_PBA)) {
 #       Walley's general model {t varying, s varying}:
 
 plot(knots(cdf_m3_left), cdf_m3_left(knots(cdf_m3_left)),
-    col = color_m3, type = "l", lwd=3, xlab=expression(theta), ylab="CDF",
+    col = color_m3, type = "l", lwd=3,
+    xlab=expression(theta), ylab="CDF", cex.lab = 1.5, cex.axis = 1.5,
     xlim=c(0.035,0.97), ylim=c(0.036,0.964) )
 
 points(knots(cdf_m3_right),  cdf_m3_right( knots(cdf_m3_right)),
