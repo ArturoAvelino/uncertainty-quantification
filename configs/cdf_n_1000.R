@@ -15,6 +15,7 @@ t_m2_right <- 1 - t_m2_left  # prior "t" for right CDFs
 s_m2  <- 15           # prior "s" for both CDF
 
 color_m2 <- "green"  # color to plot the CDFs
+plot_m2 <- "true"  # add this plot in the output figure?: "true" or "false"
 
 # -------------------------
 
@@ -36,6 +37,7 @@ color_m4 <- "red"  # color to plot the CDFs
 
 probab_threshold <- 0.99 # Probability region of the boundary CDFs
 
+plot_m4 <- "true"  # add this plot in the output figure?: "true" or "false"
 # -------------------------
 
 # Model 5.2: PBA, for the case [a,b], and mean "mu" known.
@@ -45,6 +47,7 @@ bb <- 1 - aa  # maximum known value of theta
 
 color_m5 <- "blue"
 
+plot_m5 <- "true"  # add this plot in the output figure?: "true" or "false"
 # -------------------------
 
 # The "true" CDF. Fixed values of the parameters used to simulate samples
@@ -54,4 +57,4 @@ s_true <- 4
 
 color_true <- "black"
 
-# ########################################################60
+plot_true <- "false"  # add this plot in the output figure?: "true" or "false"
