@@ -31,6 +31,7 @@ s_m2  <- 15           # prior "s" for both CDF
 
 color_m2 <- "green"  # color to plot the CDFs
 
+plot_m2 <- "true"  # add this plot in the output figure?: "true" or "false"
 # -------------------------
 
 # Model 3: Walley's general model {t varying, s varying}:
@@ -51,6 +52,7 @@ color_m4 <- "red"  # color to plot the CDFs
 
 probab_threshold <- 0.99 # Probability region of the boundary CDFs
 
+plot_m4 <- "true"  # add this plot in the output figure?: "true" or "false"
 # -------------------------
 
 # Model 5.1: PBA, for the case [a,b] known.
@@ -69,6 +71,7 @@ bb <- 1 - aa  # maximum known value of theta
 
 color_m5 <- "blue"
 
+plot_m5 <- "true"  # add this plot in the output figure?: "true" or "false"
 # -------------------------
 
 # The "true" CDF. Fixed values of the parameters used to simulate samples
@@ -78,6 +81,7 @@ s_true <- 4
 
 color_true <- "black"
 
+plot_true <- "true"  # add this plot in the output figure?: "true" or "false"
 # ########################################################60
 #
 #		THE CODE: NO NEED FOR USER INTERACTION
@@ -97,7 +101,7 @@ sample_size <- 1e4
 grid_size <- 1e5
 
 # Define the grid of values for theta.
-grid_theta <- seq(from=1e-8, to=(1 - 1e-8), length.out=grid_size)
+grid_theta <- seq(from=1e-4, to= (1-1e-4), length.out=grid_size)
 
 # Converting the values (s, t) to (alpha, beta):
 alpha_true <- s_true * t_true
@@ -552,11 +556,14 @@ UBF_a_b_fun <- function(theta, aa){
 LBF_a_b_sample <- rep(-1, grid_size)
 UBF_a_b_sample <- rep(-1, grid_size)
 
-# Compute the LBF and UBF values
-for(i1 in 1:length(grid_theta)) {
+# Define the grid of values for theta.
+grid_theta_PBA <- seq(from=1e-8, to=(1 - 1e-8), length.out=grid_size)
 
-    LBF_a_b_sample[i1] <- LBF_a_b_fun(grid_theta[i1], bb)
-    UBF_a_b_sample[i1] <- UBF_a_b_fun(grid_theta[i1], aa)
+# Compute the LBF and UBF values
+for(i1 in 1:length(grid_theta_PBA)) {
+
+    LBF_a_b_sample[i1] <- LBF_a_b_fun(grid_theta_PBA[i1], bb)
+    UBF_a_b_sample[i1] <- UBF_a_b_fun(grid_theta_PBA[i1], aa)
 }
 
 # plot(grid_theta, LBF_a_b_sample, cex=0.2, xlim=c(0,1))
@@ -598,11 +605,14 @@ UBF_mean_fun <- function(theta, aa, bb, mu){
 LBF_mean_sample <- rep(-1, grid_size)
 UBF_mean_sample <- rep(-1, grid_size)
 
-# Compute the LBF and UBF values
-for(i1 in 1:length(grid_theta)) {
+# Define the grid of values for theta.
+grid_theta_PBA <- seq(from=1e-8, to=(1 - 1e-8), length.out=grid_size)
 
-    LBF_mean_sample[i1] <- LBF_mean_fun(grid_theta[i1], aa, bb, mu)
-    UBF_mean_sample[i1] <- UBF_mean_fun(grid_theta[i1], aa, bb, mu)
+# Compute the LBF and UBF values
+for(i1 in 1:length(grid_theta_PBA)) {
+
+    LBF_mean_sample[i1] <- LBF_mean_fun(grid_theta_PBA[i1], aa, bb, mu)
+    UBF_mean_sample[i1] <- UBF_mean_fun(grid_theta_PBA[i1], aa, bb, mu)
 }
 
 # ########################################################60
@@ -614,7 +624,7 @@ for(i1 in 1:length(grid_theta)) {
 
 plot(knots(cdf_m3_left), cdf_m3_left(knots(cdf_m3_left)),
     col = color_m3, type = "l", lwd=3, xlab=expression(theta), ylab="CDF",
-    xlim=c(0.03,0.975), ylim=c(0.036,0.964) )
+    xlim=c(0.035,0.97), ylim=c(0.036,0.964) )
 
 points(knots(cdf_m3_right),  cdf_m3_right( knots(cdf_m3_right)),
     col = color_m3, type = "l", lwd=3)
@@ -622,11 +632,13 @@ points(knots(cdf_m3_right),  cdf_m3_right( knots(cdf_m3_right)),
 # -----------------------
 #       Walley's {t varying, s fix}:
 
+if (plot_m2 == "true") {
 points(knots(cdf_m2_left), cdf_m2_left(knots(cdf_m2_left)),
     col = color_m2, type = "l", lwd=2 )
 
 points(knots(cdf_m2_right), cdf_m2_right(knots(cdf_m2_right)),
     col = color_m2, type = "l", lwd=2)
+}
 
 # -----------------------
 #       Walley's {t fix, s varying}:
@@ -641,12 +653,14 @@ points(knots(cdf_m2_right), cdf_m2_right(knots(cdf_m2_right)),
 
 # -----------------------
 # 		HBM
+if (plot_m4 == "true") {
 
 # points(knots(cdf_m4_theta), cdf_m4_theta(knots(cdf_m4_theta)), col= color_m4, type = "l", lwd=2)
 
 points(knots(cdf_m4_left), cdf_m4_left(knots(cdf_m4_left)), col= color_m4, type = "l", lwd=2)
 
 points(knots(cdf_m4_right), cdf_m4_right(knots(cdf_m4_right)), col= color_m4, type = "l", lwd=2)
+}
 
 # -----------------------
 #       PBA, [a,b] known
@@ -658,14 +672,20 @@ points(knots(cdf_m4_right), cdf_m4_right(knots(cdf_m4_right)), col= color_m4, ty
 # -----------------------
 #       PBA, [a,b], mean, known
 
-points(grid_theta, LBF_mean_sample, type="l", lwd=3, col = color_m5)
+if (plot_m5 == "true") {
 
-points(grid_theta, UBF_mean_sample, type="l", lwd=3, col = color_m5)
+    points(grid_theta_PBA, LBF_mean_sample, type="l", lwd=3, col = color_m5)
+
+    points(grid_theta_PBA, UBF_mean_sample, type="l", lwd=3, col = color_m5)
+}
 
 # -----------------------
 #       The "true" CDF
 
-points(knots(cdf_true),  cdf_true( knots(cdf_true)), col = color_true, type = "l", lwd=2, lty="dotted")
+if (plot_true == "true") {
+
+    points(knots(cdf_true),  cdf_true( knots(cdf_true)), col = color_true, type = "l", lwd=2, lty="dotted")
+}
 
 # -----------------------
 
